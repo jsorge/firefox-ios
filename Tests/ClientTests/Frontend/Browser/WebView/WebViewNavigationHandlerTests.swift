@@ -133,9 +133,16 @@ class WebViewNavigationHandlerTests: XCTestCase {
                                            navigationAction: policy)
     }
 
-    func testFilterMainFrame_allowsVideo() {
+    func testFilterMainFrame_downloadsVideo() {
         let handler: (WKNavigationActionPolicy) -> Void = { policy in
-            XCTAssertEqual(policy, .allow, "Allows video")
+			let expected: (WKNavigationActionPolicy, String)
+			if #available(iOS 14.5, *) {
+				expected = (.download, "Downloads video")
+			} else {
+				expected = (.allow, "Allows video")
+			}
+
+			XCTAssertEqual(policy, expected.0, expected.1)
         }
 
         let navigationHandler = WebViewNavigationHandlerImplementation(decisionHandler: handler)

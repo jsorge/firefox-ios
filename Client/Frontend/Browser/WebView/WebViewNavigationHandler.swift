@@ -57,8 +57,18 @@ struct WebViewNavigationHandlerImplementation: WebViewNavigationHandler {
             return
         }
 
-        // Allow video, and certain application types
-        if url.hasPrefix("data:video/") || url.hasPrefix("data:application/pdf") || url.hasPrefix("data:application/json") {
+		// Download video
+		if url.hasPrefix("data:video/") {
+			if #available(iOS 14.5, *) {
+				decisionHandler(.download)
+			} else {
+				decisionHandler(.allow)
+			}
+			return
+		}
+
+        // Allow certain application types
+        if url.hasPrefix("data:application/pdf") || url.hasPrefix("data:application/json") {
             decisionHandler(.allow)
             return
         }
